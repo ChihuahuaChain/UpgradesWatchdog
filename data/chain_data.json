@@ -1,0 +1,14 @@
+{
+  "chihuahua": {
+    "name": "Chihuahua",
+    "api": ["https://api.chihuahua.wtf"],
+    "rpc": ["https://rpc.chihuahua.wtf"],
+    "github": "ChihuahuaChain/chihuahua"
+  },
+  "akash": {
+    "name": "Akash",
+    "api": ["https://api.akash.forbole.com", "https://akash-api.polkachu.com"],
+    "rpc": ["https://rpc.akash.forbole.com", "https://akash-rpc.polkachu.com"],
+    "github": "ovrclk/akash"
+    }
+}
