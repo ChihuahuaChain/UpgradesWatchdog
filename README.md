@@ -60,7 +60,7 @@ git clone https://github.com/ChihuahuaChain/UpgradesWatchdog
 - Install dependencies
 ```bash 
 cd UpgradesWatchdog\
-pip3 install -m requirements.txt
+pip3 install GitPython pycosmicwrap pygithub
 ```
 - Edit the configuration variables on the watchdog.py
   - ```github_token = "YOUR_GITHUB_TOKEN"```
