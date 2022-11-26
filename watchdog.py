@@ -15,9 +15,10 @@
 
 from pycosmicwrap import CosmicWrap
 from telegram.ext import Updater
-from github import Github
 from git.repo.base import Repo
+from github import Github
 from time import sleep
+import multiprocessing
 import logging
 import json
 import os
@@ -41,29 +42,32 @@ supported = ["chihuahua", "osmosis", "bitcanna"]
 
 
 chains = []
+queue = []
 g = Github(github_token)
 chain_registry = "https://github.com/cosmos/chain-registry"
 telegram = Updater(token=telegram_token)
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
+
 # Clone the chain-registry, if it's already there, update it.
-try:
-    Repo.clone_from(chain_registry, "./data/chain-registry")
-    logging.info("[!] Cloned https://github.com/cosmos/chain-registry into ./data")
-except:
-    Repo("./data/chain-registry").remotes.origin.pull()
-    logging.info("[!] Updated chain-registry data")
+def get_chain_data():
+    global chains
+    try:
+        Repo.clone_from(chain_registry, (os.getcwd() + "/data/chain-registry"))
+        logging.info("[!] Cloned https://github.com/cosmos/chain-registry into ./data")
+    except:
+        Repo(os.getcwd() + "/data/chain-registry").remotes.origin.pull()
+        logging.info("[!] Updated chain-registry data")
+    for dirs in os.listdir(os.getcwd() + "/data/chain-registry"):
+        if dirs in supported:
+            chains.append(dirs)
 
 
-for dirs in os.listdir("./data/chain-registry/"):
-    if dirs in supported:
-        chains.append(dirs)
-
-for chain in chains:
-    with open("./data/chain-registry/%s/chain.json" % chain, 'r') as chain_file:
+def check_chain(chain):
+    with open(os.getcwd() + "/data/chain-registry/%s/chain.json" % chain, 'r') as chain_file:
         chain = json.load(chain_file)
     try:
-        with open('./data/cache/' + chain['chain_name'].lower() + '.json', 'r') as cache_file:
+        with open(os.getcwd() + '/data/cache/' + chain['chain_name'].lower() + '.json', 'r') as cache_file:
             cache = json.load(cache_file)
     except:
         cache = {"last_notified_proposal": 0,
@@ -108,7 +112,7 @@ for chain in chains:
                                                                  parse_mode='HTML',
                                                                  disable_web_page_preview=True)
                                         cache['last_notified_proposal'] = proposal_id
-                                        with open('./data/cache/' + chain['chain_name'].lower() + '.json',
+                                        with open(os.getcwd() + '/data/cache/' + chain['chain_name'].lower() + '.json',
                                                   'w') as cache_file:
                                             json.dump(cache, cache_file)
                                         sleep(.5)
@@ -134,7 +138,7 @@ for chain in chains:
                                                          disable_web_page_preview=True)
                                 sleep(.5)
                                 cache['last_notified_release'] = str(releases.tag_name)
-                                with open('./data/cache/' + chain['chain_name'].lower() + '.json', 'w') as cache_file:
+                                with open(os.getcwd() + '/data/cache/' + chain['chain_name'].lower() + '.json', 'w') as cache_file:
                                     json.dump(cache, cache_file)
                             except Exception as e:
                                 logging.error("[X] Unable to send notification to %s. (%s)" % (chat_id, str(e)))
@@ -147,3 +151,15 @@ for chain in chains:
                     logging.error("[X] (%s) ERROR %s" % (chain['chain_name'].upper(), str(e)))
     except Exception as e:
         logging.error("[X] (%s) ERROR %s" % (chain['chain_name'].upper(), str(e)))
+
+
+get_chain_data()
+
+for chain in chains:
+    queue.append(multiprocessing.Process(target=check_chain, args=[chain], daemon=True))
+
+for process in queue:
+    process.start()
+
+for process in queue:
+    process.join()
