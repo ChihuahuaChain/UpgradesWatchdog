@@ -46,7 +46,7 @@ Some networks are giving us headache because they don't properly release softwar
 
 
 - [x] Release Source Code
-- [x] Added multithreading
+- [x] Added multiprocessing
 - [ ] Add Twitter Notifications
 - [ ] Add Discord Notifications
 - [ ] Add image generation notifications
