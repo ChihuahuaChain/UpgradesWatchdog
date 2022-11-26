@@ -44,11 +44,12 @@ This code is currently a draft and rushed in to "just work".
 There is a lot more to add and polish, twitter? discord? The more, the better!
 Some networks are giving us headache because they don't properly release software on GitHub or because of faulty endpoints.
 
-- [x] v2.0b Private Testing
+
 - [x] Release Source Code
-- [ ] Better coding
+- [x] Added multithreading
 - [ ] Add Twitter Notifications
 - [ ] Add Discord Notifications
+- [ ] Add image generation notifications
 
 
 ## Installation
