@@ -49,7 +49,7 @@ Some networks are giving us headache because they don't properly release softwar
 - [x] Added multiprocessing
 - [ ] Add Twitter Notifications
 - [ ] Add Discord Notifications
-- [ ] Add image generation notifications
+- [x] Add image generation notifications
 
 
 ## Installation
@@ -61,13 +61,14 @@ git clone https://github.com/ChihuahuaChain/UpgradesWatchdog
 - Install dependencies
 ```bash 
 cd UpgradesWatchdog\
-pip3 install GitPython pycosmicwrap pygithub
+pip3 install GitPython pycosmicwrap pygithub pillow
 ```
 - Edit the configuration variables on the watchdog.py
   - ```github_token = "YOUR_GITHUB_TOKEN"```
   - ```telegram_token = "TELEGRAM_BOT_TOKEN"```
   - ```telegram_notification = ["TELEGRAM_ID_1", "TELEGRAM_ID_2"]```
   - ```supported = ["chihuahua", "osmosis", "bitcanna"]```
+  - ```use_image = True | False```
 
 - Launch it
   - ```python3 watchdog.py```
